@@ -1,7 +1,41 @@
 # first of all import the socket library
-import socket            
+import socket    
+import threading        
 from server import Server
 from client import Client
+
+        
+
+def FindNewClients():
+    return s.accept() 
+
+def registerNewClients():
+    conn.send('Send uuid \n'.encode())
+
+    
+    uuid = conn.recv(1024 )
+    
+    
+    for uuid in clientDict:
+        conn.sendto('New Client, [placeholder] \n',clientDict[uuid].ip_address)
+
+    with conn:# get the actual message
+        try:
+            data = conn.recv(1024 , socket.MSG_DONTWAIT)
+        except BlockingIOError:
+            pass #data = bytes("0 0 0 0 0 0 1", 'utf-8')
+
+        if uuid in clientDict.keys():
+            pass
+        else:
+            clientDict[uuid] = Client('placeholderUsername',addr, 'placeholderPass',uuid)
+            conn.send('new user, send username \n'.encode())
+            username = conn.recv(1024 )
+            clientDict[uuid].username = username
+            conn.send('new user, send password\n'.encode())
+            password = conn.recv(1024 , socket.MSG_DONTWAIT)
+            clientDict[uuid].password = password
+            conn.sendall('new user created\n'.encode())
 # next create a socket object
 
 # reserve a port on your computer in our
@@ -26,49 +60,33 @@ print ("socket is listening")
 #s.setblocking(False)
 # a forever loop until we interrupt it or
 # an error occurs
+FindClientThread = threading.Thread(target=FindNewClients)
+RegisterClientThread = threading.Thread(target=registerNewClients)
+conn, addr=FindClientThread.start() # find the first client
+FindClientThread.join() # wait until first client is found
 while True:
- 
+    conn, addr=FindClientThread.start() # constantly look for more clients
+    
 # Establish connection with client.
     
-    conn, addr = s.accept() 
+    
+    #conn, addr = s.accept() 
     s.setblocking(True)
     print ('Got connection from', addr )
     #check if the client is new, and authenticate them
-    conn.send('Send uuid \n'.encode())
-
-    
-    uuid = conn.recv(1024 )
-    
+    RegisterClientThread.start()
     s.setblocking(False)
-    for uuid in clientDict:
-        conn.sendto('New Client, [placeholder] \n',clientDict[uuid].ip_address)
-
-    with conn:# get the actual message
-        try:
-            data = conn.recv(1024 , socket.MSG_DONTWAIT)
-        except BlockingIOError:
-            pass #data = bytes("0 0 0 0 0 0 1", 'utf-8')
-
-        if uuid in clientDict.keys():
-            pass
-        else:
-            clientDict[uuid] = Client(uuid,addr)
-            conn.send('new user, send username \n'.encode())
-            username = conn.recv(1024 , socket.MSG_DONTWAIT)
-            clientDict[uuid].username = username
-            conn.send('new user, send password\n'.encode())
-            password = c.password(1024 , socket.MSG_DONTWAIT)
-            clientDict[uuid].password = password
-            conn.sendall('new user created\n'.encode())
-
+    try:
+        data = conn.recv(1024 , socket.MSG_DONTWAIT)
         for key in clientDict:
             conn.sendto(data,clientDict[key].ip_address)
+    except BlockingIOError:
+        pass #data = bytes("0 0 0 0 0 0 1", 'utf-8')
+    RegisterClientThread.join()
 
 
 
-        
 
-    
 
 
 
