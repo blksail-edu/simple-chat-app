@@ -1,5 +1,6 @@
 import socket
 import datetime
+import client
 
 class Message:
     def __init__(self, sender: str, payload: str, timestamp: datetime.datetime, chatroom_id: str, uuid: str):
