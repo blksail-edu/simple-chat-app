@@ -21,9 +21,9 @@ def client_program():
     while setBoolean: 
         clientSocket.send(message.encode())
         data = clientSocket.recv(1024).decode() # data is the message sent back to the client
-        print(data) 
-        message = input("Message: ")
-        if message == "Shutdown":
+        print(data) # prints data from server into client terminal
+        message = input("Message: ") # allows user to send more message to 
+        if message.strip().lower() == "Shutdown": # "Shutdown" from client is not sent to server. Closes client socket
             setBoolean = False
     clientSocket.close()
 
