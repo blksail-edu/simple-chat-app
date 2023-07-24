@@ -1,7 +1,7 @@
 # first of all import the socket library
 import socket            
-import server.py
-import client.py
+from server import Server
+from client import Client
 # next create a socket object
 
 # reserve a port on your computer in our
