@@ -6,38 +6,42 @@ from client import Client
 
 # reserve a port on your computer in our
 # case it is 12345 but it can be anything
-port = 72345    
+port = 62345    
 ip = ''
-Main_server = Server(ip,port)
+#Main_server = Server(ip,port)
 s = socket.socket()        
-clientDict = {
+clientDict = {#create the client dictionary
 
 }
 print ("Socket successfully created")
 
            
  
-s.bind((Main_server.ip, Main_server.port))        
+s.bind((ip, port))        
 print ("socket binded to %s" %(port))
  
 # put the socket into listening mode
 s.listen(5)    
 print ("socket is listening")           
-s.setblocking(False)
+#s.setblocking(False)
 # a forever loop until we interrupt it or
 # an error occurs
 while True:
  
 # Establish connection with client.
-    conn, addr = s.accept()    
+    
+    conn, addr = s.accept() 
+    s.setblocking(True)
     print ('Got connection from', addr )
     #check if the client is new, and authenticate them
-    conn.send('Send uuid'.encode())
-    uuid = conn.recv(1024 , socket.MSG_DONTWAIT)
-    
+    conn.send('Send uuid \n'.encode())
 
+    
+    uuid = conn.recv(1024 )
+    
+    s.setblocking(False)
     for uuid in clientDict:
-        conn.sendto('New Client, [placeholder]',clientDict[uuid].ip_address)
+        conn.sendto('New Client, [placeholder] \n',clientDict[uuid].ip_address)
 
     with conn:# get the actual message
         try:
@@ -49,13 +53,13 @@ while True:
             pass
         else:
             clientDict[uuid] = Client(uuid,addr)
-            conn.send('new user, send username'.encode())
+            conn.send('new user, send username \n'.encode())
             username = conn.recv(1024 , socket.MSG_DONTWAIT)
             clientDict[uuid].username = username
-            conn.send('new user, send password'.encode())
+            conn.send('new user, send password\n'.encode())
             password = c.password(1024 , socket.MSG_DONTWAIT)
             clientDict[uuid].password = password
-            conn.sendall('new user created'.encode())
+            conn.sendall('new user created\n'.encode())
 
         for key in clientDict:
             conn.sendto(data,clientDict[key].ip_address)
