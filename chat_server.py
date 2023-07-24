@@ -41,7 +41,7 @@ def client_handling(client):
             break
 
 
-if name == "main":
+if __name__ == "__main__":
     socket = create_socket()
 
     socket.listen(20)

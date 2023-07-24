@@ -9,21 +9,21 @@ def client_program():
     """Allows client to send and recieve message to and from server after authentication.
 
     """
-    host = "10.29.122.55"
-    port = 6345
+    host = "10.29.122.55" # Currently the IP address of Emily's rasp-pi
+    port = 6345 # best number fr
 
-    clientSocket = skt.socket()
-    clientSocket.connect((host, port))
+    clientSocket = skt.socket() # creates client socket
+    clientSocket.connect((host, port)) # connect client socket to server
 
-    setBoolean = True
+    setBoolean = True # when True, client socket remains open
 
-    message = input("Message: ")
-    while setBoolean: # adding condition later
+    message = input("Message: ") 
+    while setBoolean: 
         clientSocket.send(message.encode())
         data = clientSocket.recv(1024).decode() # data is the message sent back to the client
-        print("Username: " + data)
+        print(data) 
         message = input("Message: ")
-        if input == "Shutdown":
+        if message == "Shutdown":
             setBoolean = False
     clientSocket.close()
 

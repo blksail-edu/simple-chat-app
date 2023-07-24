@@ -19,7 +19,3 @@ def validate_ip_address(self, serverIp):
 
 # if __name__ == "__main__":
 #     unittest.main()
-
-# #trials
-# def test_serverPrt(self):
-#     self.assertTrue(SERVER.validate_ip_address("10.29.33.207"), "10.29.33.207")
