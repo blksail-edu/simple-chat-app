@@ -13,7 +13,7 @@ class Message:
         else:
             self.payload = payload
         self.timestamp = now
-        
+
         self.chatroom_id = chatroom_id
         self.uuid = uuid
 
