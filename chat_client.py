@@ -4,13 +4,14 @@ import client
 import message
 import server
 import chat_server
+import threading
 
 def client_program():
     """Allows client to send and recieve message to and from server after authentication.
 
     """
-    host = "169.254.215.173" # Currently the IP address of Emily's rasp-pi
-    port = 6345 # best number fr
+    host = "10.29.63.52" # Currently the IP address of Emily's rasp-pi
+    port = 6347 # best number fr
 
     server = skt.socket() # creates client socket
     server.connect((host, port)) # connect client socket to server
@@ -45,18 +46,39 @@ def client_program():
                 registering = False
                 data = server.recv(1024).decode('utf-8')
                 print(data)
+                readThread = threading.Thread(target=read, args=(server,))
+                readThread.start()
+                writeThread = threading.Thread(target=write, args=(server,))
+                writeThread.start()
             else:
                 pass
 
 
-    while chatting: 
-        # server.send(message.encode('utf-8')) #Im not sure I understand what this is for - Daniel
-        data = server.recv(1024).decode('utf-8') # data is the message sent back to the client
-        print(data) # prints data from server into client terminal
-        message = input("Message: ").encode('utf-8') # allows user to send more message to 
-        if message.strip().lower() == "Shutdown": # "Shutdown" from client is not sent to server. Closes client socket
-            setBoolean = False
-    server.close()
+    # while chatting: 
+    #     # server.send(message.encode('utf-8')) #Im not sure I understand what this is for - Daniel
+    #     data = server.recv(1024).decode('utf-8') # data is the message sent back to the client
+    #     print(data) # prints data from server into client terminal
+    #     message = input("Message: ").encode('utf-8') # allows user to send more message to 
+    #     if message.strip().lower() == "shutdown": # "Shutdown" from client is not sent to server. Closes client socket
+    #         setBoolean = False
+    # server.close()
+
+def write(server):
+    while True:
+        try:
+            message = input("Message: ").encode('utf-8')
+            server.send(message)
+        except:
+            break
+
+def read(server):
+    while True:
+        try:
+            data = server.recv(1024).decode('utf-8')
+            if data:
+                print(data)
+        except:
+            break
 
 if __name__ == '__main__':
     client_program()
