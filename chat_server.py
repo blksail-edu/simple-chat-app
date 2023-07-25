@@ -10,8 +10,8 @@ def create_socket():
     # socket creation
     socket = skt.socket(skt.AF_INET, skt.SOCK_STREAM)
     # Bind information
-    serverIp = "169.254.215.173"
-    serverPrt = 6345
+    serverIp = "10.29.63.52"
+    serverPrt = 6347
 
     #hostname:
     # hostName = socket.gethostname()
@@ -30,12 +30,12 @@ def broadcast(msg, username = 'system accouncement'): #broadcasting message to a
     for client in clients:
         client.send(f"{username}: {msg}".encode('utf-8'))
     
-def client_handling(client, addr):
+def client_handling(client, addr, username):
     """If the client raises an exception, then break out of the loop, remove everything"""
     while True:
         try:
             message = client.recv(2048)
-            username = usernames[clients.index(client)]
+            print(message)
             broadcast(message, username)
         except:
             i = clients.index(client) #keep client socket here, and update it later
@@ -79,7 +79,7 @@ if __name__ == "__main__":
                 client.send("connection complete".encode('utf-8'))
                 #broadcast joining message using the index of the password they gave
                 broadcast(f"user: {usernames[passwords.index(testpassword)]} has join the chat")
-                thread = threading.Thread(target=client_handling, args=(client, addr))
+                thread = threading.Thread(target=client_handling, args=(client, addr, testusername))
                 thread.start()
             else:
                 client.close()
@@ -101,7 +101,7 @@ if __name__ == "__main__":
                 ipAddresses.append(addr)
                 client.send("Thank you for joining! Connection complete.".encode('utf-8'))
                 broadcast(f"user: {usernames[1]} has join the chat")
-                thread = threading.Thread(target=client_handling, args=(client, addr))
+                thread = threading.Thread(target=client_handling, args=(client, addr, newUsername))
                 thread.start()
             else:
                 pass
